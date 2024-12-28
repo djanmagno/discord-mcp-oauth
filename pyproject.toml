@@ -14,8 +14,8 @@ readme = "README.md"
 license = {file = "LICENSE"}
 
 [project.urls]
-Homepage = "https://github.com/yourusername/mcp-discord"
-Repository = "https://github.com/yourusername/mcp-discord.git"
+Homepage = "https://github.com/hanweg/mcp-discord"
+Repository = "https://github.com/hanweg/mcp-discord.git"
 
 [build-system]
 requires = ["hatchling"]
@@ -23,3 +23,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/discord_mcp"]
