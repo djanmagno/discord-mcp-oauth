@@ -49,8 +49,7 @@ cd mcp-discord
 
 # Create and activate virtual environment
 uv venv
-.venv\Scripts\activate  # On Windows
-source .venv/bin/activate  # On macOS/Linux
+.venv\Scripts\activate
 
 # Install the package
 uv pip install -e .
@@ -58,22 +57,19 @@ uv pip install -e .
 
 3. Configure Claude Desktop (`%APPDATA%\Claude\claude_desktop_config.json` on Windows, `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 ```json
-{
-  "mcpServers": {
     "discord": {
       "command": "uv",
       "args": [
         "--directory",
-        "path/to/mcp-discord",
+        "PATH_TO\\mcp-discord",
         "run",
+        "-m",
         "discord_mcp.server"
       ],
       "env": {
-        "DISCORD_TOKEN": "your_bot_token_here"
+        "DISCORD_TOKEN": "your_bot_token"
       }
     }
-  }
-}
 ```
 
 ## License
