@@ -44,7 +44,7 @@ A Model Context Protocol (MCP) server that provides Discord integration capabili
 2. Clone and install the package:
 ```bash
 # Clone the repository
-git clone https://github.com/hanwegaltimer/mcp-discord.git
+git clone https://github.com/hanweg/mcp-discord.git
 cd mcp-discord
 
 # Create and activate virtual environment
