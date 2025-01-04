@@ -2,6 +2,8 @@
 
 A Model Context Protocol (MCP) server that provides Discord integration capabilities to MCP clients like Claude Desktop.
 
+<a href="https://glama.ai/mcp/servers/wvwjgcnppa"><img width="380" height="200" src="https://glama.ai/mcp/servers/wvwjgcnppa/badge" alt="mcp-discord MCP server" /></a>
+
 ## Available Tools
 
 ### Server Information
