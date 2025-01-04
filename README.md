@@ -64,12 +64,12 @@ uv pip install -e .
       "command": "uv",
       "args": [
         "--directory",
-        "path/to/mcp-discord",
+        "C:\\PATH\\TO\\mcp-discord",
         "run",
-        "discord_mcp.server"
+        "mcp-discord"
       ],
       "env": {
-        "DISCORD_TOKEN": "your_bot_token_here"
+        "DISCORD_TOKEN": "your_bot_token"
       }
     }
   }

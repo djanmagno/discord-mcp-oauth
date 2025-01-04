@@ -3,7 +3,7 @@ name = "mcp-discord"
 version = "0.1.0"
 description = "Discord integration for Model Context Protocol"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"},
+    {name = "Hanweg Altimer", email = "hanwegaltimer@outlook.com"},
 ]
 dependencies = [
     "discord.py>=2.3.0",
@@ -26,3 +26,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/discord_mcp"]
+
+[project.scripts]
+mcp-discord = "discord_mcp:main"
