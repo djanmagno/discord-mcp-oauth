@@ -202,6 +202,32 @@ async def list_tools() -> List[Tool]:
             }
         ),
         Tool(
+            name="add_multiple_reactions",
+            description="Add multiple reactions to a message",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "channel_id": {
+                        "type": "string",
+                        "description": "Channel containing the message"
+                    },
+                    "message_id": {
+                        "type": "string",
+                        "description": "Message to react to"
+                    },
+                    "emojis": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "description": "Emoji to react with (Unicode or custom emoji ID)"
+                        },
+                        "description": "List of emojis to add as reactions"
+                    }
+                },
+                "required": ["channel_id", "message_id", "emojis"]
+            }
+        ),
+        Tool(
             name="remove_reaction",
             description="Remove a reaction from a message",
             inputSchema={
@@ -321,18 +347,33 @@ async def call_tool(name: str, arguments: Any) -> List[TextContent]:
     elif name == "read_messages":
         channel = await discord_client.fetch_channel(int(arguments["channel_id"]))
         limit = min(int(arguments.get("limit", 10)), 100)
+        fetch_users = arguments.get("fetch_reaction_users", False)  # Only fetch users if explicitly requested
         messages = []
         async for message in channel.history(limit=limit):
+            reaction_data = []
+            for reaction in message.reactions:
+                emoji_str = str(reaction.emoji.name) if hasattr(reaction.emoji, 'name') and reaction.emoji.name else str(reaction.emoji.id) if hasattr(reaction.emoji, 'id') else str(reaction.emoji)
+                reaction_info = {
+                    "emoji": emoji_str,
+                    "count": reaction.count
+                }
+                logger.error(f"Emoji: {emoji_str}")
+                reaction_data.append(reaction_info)
             messages.append({
                 "id": str(message.id),
                 "author": str(message.author),
                 "content": message.content,
-                "timestamp": message.created_at.isoformat()
+                "timestamp": message.created_at.isoformat(),
+                "reactions": reaction_data  # Add reactions to message dict
             })
         return [TextContent(
             type="text",
             text=f"Retrieved {len(messages)} messages:\n\n" + 
-                 "\n".join([f"{m['author']} ({m['timestamp']}): {m['content']}" for m in messages])
+                 "\n".join([
+                     f"{m['author']} ({m['timestamp']}): {m['content']}\n" +
+                     f"Reactions: {', '.join([f'{r['emoji']}({r['count']})' for r in m['reactions']]) if m['reactions'] else 'No reactions'}"
+                     for m in messages
+                 ])
         )]
 
     elif name == "get_user_info":
@@ -476,6 +517,16 @@ async def call_tool(name: str, arguments: Any) -> List[TextContent]:
         return [TextContent(
             type="text",
             text=f"Added reaction {arguments['emoji']} to message"
+        )]
+
+    elif name == "add_multiple_reactions":
+        channel = await discord_client.fetch_channel(int(arguments["channel_id"]))
+        message = await channel.fetch_message(int(arguments["message_id"]))
+        for emoji in arguments["emojis"]:
+            await message.add_reaction(emoji)
+        return [TextContent(
+            type="text",
+            text=f"Added reactions: {', '.join(arguments['emojis'])} to message"
         )]
 
     elif name == "remove_reaction":
