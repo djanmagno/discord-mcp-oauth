@@ -366,12 +366,16 @@ async def call_tool(name: str, arguments: Any) -> List[TextContent]:
                 "timestamp": message.created_at.isoformat(),
                 "reactions": reaction_data  # Add reactions to message dict
             })
+        # Helper function to format reactions
+        def format_reaction(r):
+            return f"{r['emoji']}({r['count']})"
+            
         return [TextContent(
             type="text",
             text=f"Retrieved {len(messages)} messages:\n\n" + 
                  "\n".join([
                      f"{m['author']} ({m['timestamp']}): {m['content']}\n" +
-                     f"Reactions: {', '.join([f'{r['emoji']}({r['count']})' for r in m['reactions']]) if m['reactions'] else 'No reactions'}"
+                     f"Reactions: {', '.join([format_reaction(r) for r in m['reactions']]) if m['reactions'] else 'No reactions'}"
                      for m in messages
                  ])
         )]
