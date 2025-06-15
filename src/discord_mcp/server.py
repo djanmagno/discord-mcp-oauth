@@ -350,6 +350,15 @@ async def list_tools() -> List[Tool]:
                 },
                 "required": ["channel_id", "message_id", "reason"]
             }
+        ),
+        Tool(
+            name="list_servers",
+            description="Get a list of all Discord servers the bot has access to with their details such as name, id, member count, and creation date.",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
         )
     ]
 
@@ -579,6 +588,22 @@ async def call_tool(name: str, arguments: Any) -> List[TextContent]:
         return [TextContent(
             type="text",
             text=f"Removed reaction {arguments['emoji']} from message"
+        )]
+
+    elif name == "list_servers":
+        servers = []
+        for guild in discord_client.guilds:
+            servers.append({
+                "id": str(guild.id),
+                "name": guild.name,
+                "member_count": guild.member_count,
+                "created_at": guild.created_at.isoformat()
+            })
+        
+        return [TextContent(
+            type="text",
+            text=f"Available Servers ({len(servers)}):\n" + 
+                 "\n".join(f"{s['name']} (ID: {s['id']}, Members: {s['member_count']})" for s in servers)
         )]
 
     raise ValueError(f"Unknown tool: {name}")
