@@ -66,6 +66,20 @@ async def list_tools() -> List[Tool]:
             }
         ),
         Tool(
+            name="get_channels",
+            description="Get a list of all channels in a Discord server",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "server_id": {
+                        "type": "string",
+                        "description": "Discord server (guild) ID"
+                    }
+                },
+                "required": ["server_id"]
+            }
+        ),
+        Tool(
             name="list_members",
             description="Get a list of members in a server",
             inputSchema={
@@ -442,6 +456,23 @@ async def call_tool(name: str, arguments: Any) -> List[TextContent]:
             type="text",
             text=f"Server Information:\n" + "\n".join(f"{k}: {v}" for k, v in info.items())
         )]
+
+    elif name == "get_channels":
+        try:
+            guild = discord_client.get_guild(int(arguments["server_id"]))
+            if guild:
+                channel_list = []
+                for channel in guild.channels:
+                    channel_list.append(f"#{channel.name} (ID: {channel.id}) - {channel.type}")
+                
+                return [TextContent(
+                    type="text", 
+                    text=f"Channels in {guild.name}:\n" + "\n".join(channel_list)
+                )]
+            else:
+                return [TextContent(type="text", text="Guild not found")]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Error: {str(e)}")]
 
     elif name == "list_members":
         guild = await discord_client.fetch_guild(int(arguments["server_id"]))
