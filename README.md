@@ -8,8 +8,11 @@ A Model Context Protocol (MCP) server that provides Discord integration capabili
 ## Available Tools
 
 ### Server Information
+- `list_servers`: List available servers
 - `get_server_info`: Get detailed server information
+- `get_channels`: List channels in a server
 - `list_members`: List server members and their roles
+- `get_user_info`: Get detailed information about a user
 
 ### Message Management
 - `send_message`: Send a message to a channel
@@ -27,22 +30,7 @@ A Model Context Protocol (MCP) server that provides Discord integration capabili
 - `add_role`: Add a role to a user
 - `remove_role`: Remove a role from a user
 
-### Webhook Management
-- `create_webhook`: Create a new webhook
-- `list_webhooks`: List webhooks in a channel
-- `send_webhook_message`: Send messages via webhook
-- `modify_webhook`: Update webhook settings
-- `delete_webhook`: Delete a webhook
-
 ## Installation
-
-### Installing via Smithery
-
-To install Discord Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@hanweg/mcp-discord):
-
-```bash
-npx -y @smithery/cli install @hanweg/mcp-discord --client claude
-```
 
 1. Set up your Discord bot:
    - Create a new application at [Discord Developer Portal](https://discord.com/developers/applications)
@@ -61,7 +49,7 @@ cd mcp-discord
 
 # Create and activate virtual environment
 uv venv
-.venv\Scripts\activate
+.venv\Scripts\activate # On macOS/Linux, use: source .venv/bin/activate
 
 ### If using Python 3.13+ - install audioop library: `uv pip install audioop-lts`
 
@@ -83,6 +71,14 @@ uv pip install -e .
         "DISCORD_TOKEN": "your_bot_token"
       }
     }
+```
+
+### Installing via Smithery
+
+To install Discord Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@hanweg/mcp-discord):
+
+```bash
+npx -y @smithery/cli install @hanweg/mcp-discord --client claude
 ```
 
 ## License

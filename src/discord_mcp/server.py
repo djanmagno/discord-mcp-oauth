@@ -1,23 +1,24 @@
 import os
 import sys
-
-# Force UTF-8 encoding for stdout on Windows
-if sys.platform == "win32":
-    import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
-
 import asyncio
 import logging
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, List
 from functools import wraps
-
 import discord
 from discord.ext import commands
 from mcp.server import Server
-from mcp.types import Tool, TextContent, EmptyResult
+from mcp.types import Tool, TextContent
 from mcp.server.stdio import stdio_server
+
+def _configure_windows_stdout_encoding():
+    if sys.platform == "win32":
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+_configure_windows_stdout_encoding()
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("discord-mcp-server")
