@@ -1,85 +1,106 @@
-# Discord MCP Server
+# Discord MCP OAuth2 Server
 
-[![smithery badge](https://smithery.ai/badge/@hanweg/mcp-discord)](https://smithery.ai/server/@hanweg/mcp-discord)
-A Model Context Protocol (MCP) server that provides Discord integration capabilities to MCP clients like Claude Desktop.
+A Model Context Protocol (MCP) server that provides Discord integration using OAuth2 user authentication for MCP clients like Claude Desktop. This allows Claude to access Discord with YOUR permissions, eliminating the need for bot setup and admin approvals.
 
-<a href="https://glama.ai/mcp/servers/wvwjgcnppa"><img width="380" height="200" src="https://glama.ai/mcp/servers/wvwjgcnppa/badge" alt="mcp-discord MCP server" /></a>
+## Key Benefits
+
+- ✅ **No Bot Required**: Use your own Discord account instead of creating a bot
+- ✅ **Automatic Access**: Access all servers you're already a member of
+- ✅ **No Admin Approval**: No need to get bot permissions from server administrators
+- ✅ **Your Permissions**: Claude sees exactly what you can see on Discord
+- ✅ **Secure**: OAuth2 with encrypted token storage and automatic refresh
 
 ## Available Tools
 
 ### Server Information
-- `list_servers`: List available servers
-- `get_server_info`: Get detailed server information
-- `get_channels`: List channels in a server
-- `list_members`: List server members and their roles
-- `get_user_info`: Get detailed information about a user
+- `list_servers`: List all Discord servers you have access to
+- `get_server_info`: Get detailed information about a server
+- `get_channels`: List channels in a server you can see
+- `list_members`: List server members (if you have permission)
+- `get_user_info`: Get information about a Discord user
 
-### Message Management
-- `send_message`: Send a message to a channel
-- `read_messages`: Read recent message history
-- `add_reaction`: Add a reaction to a message
-- `add_multiple_reactions`: Add multiple reactions to a message
-- `remove_reaction`: Remove a reaction from a message
-- `moderate_message`: Delete messages and timeout users
+### Message Reading
+- `read_messages`: Read recent message history from channels you can access
 
-### Channel Management
-- `create_text_channel`: Create a new text channel
-- `delete_channel`: Delete an existing channel
-
-### Role Management
-- `add_role`: Add a role to a user
-- `remove_role`: Remove a role from a user
+*Note: Write operations (sending messages, managing roles, etc.) are not included as they require special permissions that regular users typically don't have.*
 
 ## Installation
 
-1. Set up your Discord bot:
-   - Create a new application at [Discord Developer Portal](https://discord.com/developers/applications)
-   - Create a bot and copy the token
-   - Enable required privileged intents:
-     - MESSAGE CONTENT INTENT
-     - PRESENCE INTENT
-     - SERVER MEMBERS INTENT
-   - Invite the bot to your server using OAuth2 URL Generator
+### 1. Set up Discord OAuth2 Application
 
-2. Clone and install the package:
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click "New Application" and give it a name
+3. Navigate to **OAuth2** → **General**
+4. Copy the **Client ID** and **Client Secret**
+5. Add redirect URI: `http://localhost:8000/callback`
+6. Save changes
+
+### 2. Clone and Install
+
 ```bash
-# Clone the repository
-git clone https://github.com/hanweg/mcp-discord.git
-cd mcp-discord
+# Clone this repository
+git clone https://github.com/YOUR-USERNAME/mcp-discord-oauth.git
+cd mcp-discord-oauth
 
 # Create and activate virtual environment
 uv venv
-.venv\Scripts\activate # On macOS/Linux, use: source .venv/bin/activate
+source .venv/bin/activate  # macOS/Linux
+# .venv\Scripts\activate   # Windows
 
-### If using Python 3.13+ - install audioop library: `uv pip install audioop-lts`
-
-# Install the package
+# Install dependencies
 uv pip install -e .
 ```
 
-3. Configure Claude Desktop (`%APPDATA%\Claude\claude_desktop_config.json` on Windows, `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+### 3. Configure Claude Desktop
+
+Update your Claude Desktop configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
 ```json
+{
+  "mcpServers": {
     "discord": {
       "command": "uv",
       "args": [
         "--directory",
-        "C:\\PATH\\TO\\mcp-discord",
+        "/path/to/mcp-discord-oauth",
         "run",
         "mcp-discord"
       ],
       "env": {
-        "DISCORD_TOKEN": "your_bot_token"
+        "DISCORD_CLIENT_ID": "your_oauth_client_id",
+        "DISCORD_CLIENT_SECRET": "your_oauth_client_secret",
+        "DISCORD_REDIRECT_URI": "http://localhost:8000/callback"
       }
     }
+  }
+}
 ```
 
-### Installing via Smithery
+### 4. First Time Setup
 
-To install Discord Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@hanweg/mcp-discord):
+1. Restart Claude Desktop
+2. Try using a Discord command like "What servers do I have access to?"
+3. Your browser will open for OAuth2 authorization
+4. Grant permission to access your Discord account
+5. Return to Claude - it now has access to your Discord data!
 
-```bash
-npx -y @smithery/cli install @hanweg/mcp-discord --client claude
-```
+## How It Works
+
+1. **OAuth2 Authentication**: Uses standard OAuth2 flow to authenticate with your Discord account
+2. **Token Storage**: Securely stores access tokens with encryption in your home directory
+3. **Auto Refresh**: Automatically refreshes tokens when they expire
+4. **REST API**: Makes direct Discord API calls using your permissions
+5. **MCP Integration**: Provides tools to Claude Desktop for Discord interaction
+
+## Security
+
+- Tokens are encrypted using Fernet symmetric encryption
+- Stored in your home directory with restricted permissions
+- Uses PKCE (Proof Key for Code Exchange) for additional security
+- Automatic token refresh prevents stale credentials
 
 ## License
 
